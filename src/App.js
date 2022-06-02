@@ -1,7 +1,7 @@
-import 'bootstrap/dist/css/bootstrap.min.css';
+
 import './App.css';
 import UserComponent from "./component/UserComponent";
-import ChatComponent from "./component/ChatComponent";
+import ChatListComponent from "./component/ChatListComponent";
 
 
 function App() {

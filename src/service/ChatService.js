@@ -5,7 +5,7 @@ const PATH = "http://localhost:8080/chat";
 class ChatService {
 
     getChats(){
-        axios.get(PATH);
+        return axios.get(PATH);
     }
 }
 

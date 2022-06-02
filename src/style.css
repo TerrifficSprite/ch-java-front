@@ -5,10 +5,24 @@
     color: beige;
 }
 
-body{
+body {
     background-color: #191818;
 }
 
 #root {
     margin: 20px;
+    height: 100%;
+}
+
+.dropdown {
+    margin: 10px auto;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.chats {
+    display: flex;
+    background-color: #282c34;
+    flex-direction: column;
 }
