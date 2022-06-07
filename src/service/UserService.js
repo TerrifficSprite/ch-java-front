@@ -9,7 +9,7 @@ class UserService {
     }
 
     getChatsByUser(id){
-        return axios.get(PATH + "/" + id + "/chats");
+        return axios.get(`${PATH}/${id}/chats`);
     }
 }
 

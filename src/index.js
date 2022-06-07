@@ -9,13 +9,11 @@ import ChatListComponent from "./component/ChatListComponent";
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-      <div className={"container"}>
-          <BrowserRouter>
-              <Routes>
-                  <Route path={"/"} element={<ChatListComponent/>}/>
-                  {/*<Route path={"chat"} element={<ChatListComponent/>}/>*/}
-              </Routes>
-          </BrowserRouter>
-      </div>
+      <BrowserRouter>
+          <Routes>
+              <Route path={"/"} element={<ChatListComponent/>}/>
+              {/*<Route path={"chat"} element={<ChatListComponent/>}/>*/}
+          </Routes>
+      </BrowserRouter>
   </React.StrictMode>
 );

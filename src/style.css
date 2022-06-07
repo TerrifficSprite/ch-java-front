@@ -2,11 +2,12 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    color: beige;
+
 }
 
 body {
     background-color: #191818;
+    color: beige;
 }
 
 #root {
@@ -14,15 +15,28 @@ body {
     height: 100%;
 }
 
-.dropdown {
-    margin: 10px auto;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-}
-
 .chats {
     display: flex;
     background-color: #282c34;
     flex-direction: column;
+    width: 25%;
+    height: 100%;
+}
+
+.dropdown {
+    position: relative;
+    padding: 5px 10px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    flex-direction: row;
+    justify-content: space-evenly;
+}
+
+.dropdown img {
+    width: 15%;
+}
+
+.modal {
+    color: #000;
 }
