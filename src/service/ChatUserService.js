@@ -11,6 +11,9 @@ class ChatService {
         });
     }
 
+    getByChatAndUser(chat, user) {
+        return axios.get(`${PATH}/byChatAndUser?chat=${chat}&user=${user}`);
+    }
 
 }
 

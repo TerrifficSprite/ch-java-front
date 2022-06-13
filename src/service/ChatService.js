@@ -14,6 +14,10 @@ class ChatService {
         });
     }
 
+    getMessagesByChat(code) {
+        return axios.get(`${PATH}/${code}/messages`);
+    }
+
 
 }
 
