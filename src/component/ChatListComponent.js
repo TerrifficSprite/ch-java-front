@@ -1,27 +1,27 @@
-import React, {useState, useEffect} from "react";
-import {Button, Card, Dropdown, DropdownButton, FormControl, FormLabel, Image, Modal, Form} from "react-bootstrap";
-import {Link} from "react-router-dom";
+import React, {useEffect, useState} from "react";
+import {Button, Card, Dropdown, DropdownButton, Form, FormControl, FormLabel, Image, Modal} from "react-bootstrap";
 import UserService from "../service/UserService";
 import ChatService from "../service/ChatService";
 import ChatUserService from "../service/ChatUserService";
-import avatar from "../img/avatar.webp";
 import addUser from "../img/addUser.png";
+import CreateChatModal from "./CreateChatModal";
 
-const ChatListComponent = () => {
+const ChatListComponent = ({setAllUsers}, code) => {
 
-    const [show, setShow] = useState(false);
     const [chats, setChats] = useState([]);
     const [users, setUsers] = useState([]);
     const [currentUser, setCurrentUser] = useState({});
     const [title, setTitle] = useState("Users");
-    const [inviteTitle, setInviteTitle] = useState("Users");
-    const [chatTitle, setChatTitle] = useState("");
-
-    const showModal = () => setShow(true);
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         return () => {
             UserService.getUsers().then(response => {
+                try {
+                    setAllUsers(response.data);
+                } catch (e) {
+
+                }
                 setUsers(response.data);
                 getChats();
                 setTitle(localStorage.getItem("username"));
@@ -34,20 +34,12 @@ const ChatListComponent = () => {
 
     function getChats() {
         let id = localStorage.getItem("id");
-        if(id === null)
+        if (id === null)
             setChats([]);
         else {
             UserService.getChatsByUser(id).then(response => {
                 setChats(response.data);
             });
-        }
-    }
-
-    function changeChatName(e){
-        try {
-            setChatTitle(e.target.value);
-        } catch (TypeError) {
-            setChatTitle(e);
         }
     }
 
@@ -62,31 +54,19 @@ const ChatListComponent = () => {
         getChats();
     }
 
-    const filteredUsers =  users.filter((user) => user.id !== localStorage.getItem("id"));
-
-    function createChat(e){
-        if(inviteTitle === "Users")
-            e.preventDefault();
-        else if (chatTitle.length !== 0) {
-            ChatService.saveChat(chatTitle).then(response => {
-                let chat = response.data;
-                console.log(chatTitle, chat);
-                ChatUserService.saveChatUser(chat.id, localStorage.getItem("id"));
-                let inviteUser = users.filter(x => x.username === inviteTitle);
-                ChatUserService.saveChatUser(chat.id, inviteUser[0].id).then(() => {
-                    hideModal();
-                    getChats();
-                });
-            });
-            e.preventDefault();
+    function active(e) {
+        if (e.code === code.code) {
+            return " active";
         }
-        e.preventDefault();
+        return "";
     }
 
-    function hideModal(){
-        setInviteTitle("Users");
-        setShow(false);
-        changeChatName("");
+    function showModal(){
+        setShow(true);
+    }
+
+    const getFromModal = (show) => {
+        setShow(show);
     }
 
     return (
@@ -101,56 +81,30 @@ const ChatListComponent = () => {
                 <div style={{width: "15%"}}>
                     <Image src={addUser} onClick={showModal} className={"imgAddUser"}/>
                 </div>
-
-                <div>
-                    <Modal show={show} onHide={hideModal} backdrop={"static"} className={"modal"}>
-                        <Form>
-                            <Modal.Header closeButton>
-                                <Modal.Title>Create chat</Modal.Title>
-                            </Modal.Header>
-                            <Modal.Body>
-                                <FormControl required placeholder={"Chat title"} className={"mb-2"}
-                                onChange={changeChatName}/>
-                                <FormLabel>Who you want to invite</FormLabel>
-                                <DropdownButton title={inviteTitle}
-                                                style={{width: "100%"}}>
-                                    {filteredUsers.map(user => (
-                                        <Dropdown.Item onClick={() => setInviteTitle(user.username)}
-                                                       key={user.id}>{user.username}</Dropdown.Item>
-                                    ))}
-                                </DropdownButton>
-                            </Modal.Body>
-                            <Modal.Footer>
-                                <Button variant="danger" onClick={hideModal}>
-                                    Close
-                                </Button>
-                                <Button variant="success" onClick={createChat} type={"submit"}>
-                                    Create chat
-                                </Button>
-                            </Modal.Footer>
-                        </Form>
-                    </Modal>
-                </div>
+                {show && (
+                    <CreateChatModal users={users} show={show} getFromModal={getFromModal}
+                    getChats={getChats}/>
+                )}
             </div>
 
             <div className="chatList">
                 {chats.map(chat => (
-                    <div className={"one"}>
+                    <div className={"one"} key={chat.id}>
                         <a href={`/chat/${chat.code}`}>
-                            <Card bg={"dark"} key={chat.id}
-                                  style={{display: "flex", flexDirection: "row"}}>
+                            <Card bg={"dark"} key={chat.id}>
+                                <span className={"oneCard" + active(chat)}>
                                 <Card.Img variant={"top"} src={currentUser.imgurl} className={"cardImg"}/>
                                 <Card.Body>
                                     <Card.Title>{chat.title}</Card.Title>
                                     <Card.Text>{chat.code}</Card.Text>
                                 </Card.Body>
+                                </span>
                             </Card>
                         </a>
                     </div>
 
                 ))}
             </div>
-            {getChats}
         </div>
 
     );

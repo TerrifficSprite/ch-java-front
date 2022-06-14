@@ -8,14 +8,28 @@ class ChatService {
         return axios.get(PATH);
     }
 
-    saveChat(title) {
+    saveChat(title, members) {
         return axios.post(PATH, {
-            title: title
+            title: title,
+            members: members
         });
+    }
+
+    updateChat(chat) {
+        return axios.put(PATH, {
+            id: chat.id,
+            title: chat.title,
+            code: chat.code,
+            members: chat.members
+        })
     }
 
     getMessagesByChat(code) {
         return axios.get(`${PATH}/${code}/messages`);
+    }
+
+    getUsersByChat(code){
+        return axios.get(`${PATH}/${code}/users`);
     }
 
 

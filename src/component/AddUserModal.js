@@ -2,55 +2,39 @@ import {Button, Dropdown, DropdownButton, Form, FormControl, FormLabel, Modal} f
 import React, {useState} from "react";
 import ChatService from "../service/ChatService";
 import ChatUserService from "../service/ChatUserService";
+import chatService from "../service/ChatService";
 
 
-const CreateChatModal = ({users, getFromModal, getChats}, showOnce) => {
+const AddUserModal = ({chat, getFromModal, allUsers}, showOnce) => {
 
-    const [inviteTitle, setInviteTitle] = useState("Users");
-    const [chatTitle, setChatTitle] = useState("");
-    const [chats, setChats] = useState([]);
     const [show, setShow] = useState(showOnce);
+    const [inviteTitle, setInviteTitle] = useState("Users");
     const [filteredUsers, setFilteredUsers] = useState([]);
+    let users = chat.users;
 
-
-    if(users === undefined)
-        users = [];
-
-    function changeChatName(e) {
-        try {
-            setChatTitle(e.target.value);
-        } catch (TypeError) {
-            setChatTitle(e);
-        }
-    }
 
     function hideModal() {
         getFromModal(false);
         setShow(false);
         setInviteTitle("Users");
-        changeChatName("");
-    }
-
-    function createChat(e) {
-        if (inviteTitle === "Users")
-            e.preventDefault();
-        else if (chatTitle.length !== 0) {
-            ChatService.saveChat(chatTitle, 2).then(response => {
-                let chat = response.data;
-                ChatUserService.saveChatUser(chat.id, localStorage.getItem("id"));
-                let inviteUser = users.filter(x => x.username === inviteTitle);
-                ChatUserService.saveChatUser(chat.id, inviteUser[0].id).then(() => {
-                    getChats();
-                });
-            });
-            e.preventDefault();
-            hideModal();
-        }
-        e.preventDefault();
     }
 
     function onShowModal() {
-        setFilteredUsers(users.filter((user) => user.id !== localStorage.getItem("id")));
+        setFilteredUsers(allUsers.filter(user => !users.includes(user)));
+    }
+
+    function addUser(e){
+        if (inviteTitle === "Users")
+            e.preventDefault();
+        else {
+            chat.members += 1;
+            chatService.updateChat(chat);
+            let inviteUser = allUsers.filter(x => x.username === inviteTitle);
+            ChatUserService.saveChatUser(chat.id, inviteUser[0].id);
+        }
+        hideModal();
+        e.preventDefault();
+        return false;
     }
 
     return (
@@ -58,11 +42,9 @@ const CreateChatModal = ({users, getFromModal, getChats}, showOnce) => {
             <span style={{width: "100%", height: "100%", backgroundColor: "#282C34", color: "#fff"}}>
             <Form>
                 <Modal.Header>
-                    <Modal.Title>Create chat</Modal.Title>
+                    <Modal.Title>Add user to chat <strong>{chat.title}</strong></Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <FormControl required placeholder={"Chat title"} className={"mb-2"}
-                                 onChange={changeChatName}/>
                     <FormLabel>Who you want to invite</FormLabel>
                     <DropdownButton title={inviteTitle}
                                     style={{width: "100%"}}>
@@ -76,14 +58,15 @@ const CreateChatModal = ({users, getFromModal, getChats}, showOnce) => {
                     <Button variant="danger" onClick={hideModal}>
                         Close
                     </Button>
-                    <Button variant="success" onClick={createChat} type={"submit"}>
-                        Create chat
+                    <Button variant="success" onClick={addUser}>
+                        Add User
                     </Button>
                 </Modal.Footer>
             </Form>
             </span>
         </Modal>
     );
+    return (<></>)
 }
 
-export default CreateChatModal;
+export default AddUserModal;

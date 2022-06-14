@@ -5,7 +5,11 @@ import ChatListComponent from "./ChatListComponent";
 import {Form, FormControl, Button, InputGroup} from "react-bootstrap";
 import ChatUserService from "../service/ChatUserService";
 import MessageService from "../service/MessageService";
+import addUser from "../img/addUser.png";
+import AddUserModal from "./AddUserModal";
 import UserService from "../service/UserService";
+import CreateChatModal from "./CreateChatModal";
+import React from "react";
 
 const MessageComponent = () => {
 
@@ -15,8 +19,9 @@ const MessageComponent = () => {
     const [chatUser, setChatUser] = useState({});
     const [currentUser, setCurrentUser] = useState(localStorage.getItem({}));
     const [loading, setLoading] = useState(true);
-
-    const chat = useRef(null);
+    const [disable, setDisable] = useState(true);
+    const [allUsers, setAllUsers] = useState([]);
+    const [show, setShow] = useState(false);
 
     useEffect(() => {
         return () => {
@@ -39,11 +44,18 @@ const MessageComponent = () => {
     }, []);
 
     function changeMessage(e){
+        let m;
         try {
             setMessage(e.target.value);
+            m = e.target.value;
         } catch (TypeError) {
+            m = e;
             setMessage(e);
         }
+        if(m.trim().length > 0)
+            setDisable(false);
+        else
+            setDisable(true);
     }
 
     function sendMessage(e){
@@ -62,8 +74,6 @@ const MessageComponent = () => {
             return false;
         }
         setMessage("");
-        e.preventDefault();
-        return false;
     }
 
     function scroll(){
@@ -126,20 +136,43 @@ const MessageComponent = () => {
             </div>);
     }
 
+    const getFromModal = (show) => {
+        setShow(show);
+    }
+
+    function addUserToChat(){
+        ChatService.getUsersByChat(code).then(r => {
+            chatWithMessages.users = r.data;
+            setChatWithMessages(chatWithMessages);
+            setShow(true);
+            return <AddUserModal chat={chatWithMessages}/>
+        })
+    }
+
     if(loading)
         return null;
 
     return (
     <div style={{display: "flex"}}>
-        <ChatListComponent/>
+        <ChatListComponent code={code} setAllUsers={setAllUsers}/>
         <div className={"chat"}>
             <div className={"topBar"}>
-                <h2 align={"center"} className={"mt-1"}>{chatWithMessages.title}</h2>
-                <p align={"center"} className={"mb-2"}>members: {chatWithMessages.members}</p>
+                <div></div>
+                <div>
+                    <h2 align={"center"} className={"mt-1"}>{chatWithMessages.title}</h2>
+                    <p align={"center"} className={"mb-2"}>members: {chatWithMessages.members}</p>
+                </div>
+                <div className={"addUserToChat"}>
+                    <img src={addUser} className={"addUserToChatImg"} onClick={addUserToChat}/>
+                    {show && (
+                        <AddUserModal chat={chatWithMessages} show={show} allUsers={allUsers}
+                        getFromModal={getFromModal}/>
+                    )}
+                </div>
             </div>
-            <div className={"center"} id={"center"} ref={chat}>
+            <div className={"center"} id={"center"}>
                 {chatWithMessages.messages.map(message => (
-                    <div>{myMessage(message)}</div>
+                    <div key={message.id}>{myMessage(message)}</div>
                 ))}
             </div>
             <div className={"bottomBar"}>
@@ -152,7 +185,8 @@ const MessageComponent = () => {
                             placeholder="Write message there..."
                             value={message}
                         />
-                        <Button variant="secondary" type={"submit"}
+                        <Button variant="secondary" type={"submit"} disabled={disable}
+
                         onClick={(e) => sendMessage(e)} >
                             Send
                         </Button>
@@ -160,7 +194,6 @@ const MessageComponent = () => {
                 </Form>
             </div>
         </div>
-        {scroll}
     </div>
     );
 }
