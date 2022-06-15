@@ -7,6 +7,10 @@ class UserService {
     getUsers(){
         return axios.get(PATH);
     }
+
+    getChatsByUser(id){
+        return axios.get(`${PATH}/${id}/chats`);
+    }
 }
 
 export default new UserService();
