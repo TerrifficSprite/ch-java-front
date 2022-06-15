@@ -1,8 +1,8 @@
 import {Button, Dropdown, DropdownButton, Form, FormControl, FormLabel, Modal} from "react-bootstrap";
 import React, {useState} from "react";
-import ChatService from "../service/ChatService";
-import ChatUserService from "../service/ChatUserService";
-import chatService from "../service/ChatService";
+import ChatService from "../../service/ChatService";
+import ChatUserService from "../../service/ChatUserService";
+import chatService from "../../service/ChatService";
 import {forEach} from "react-bootstrap/ElementChildren";
 
 
@@ -70,7 +70,7 @@ const AddUserModal = ({chat, getFromModal, allUsers}, showOnce) => {
                     </DropdownButton>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="danger" onClick={hideModal}>
+                    <Button variant="secondary" onClick={hideModal}>
                         Close
                     </Button>
                     <Button variant="success" onClick={addUser}>

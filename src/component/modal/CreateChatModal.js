@@ -1,7 +1,7 @@
 import {Button, Dropdown, DropdownButton, Form, FormControl, FormLabel, Modal} from "react-bootstrap";
 import React, {useState} from "react";
-import ChatService from "../service/ChatService";
-import ChatUserService from "../service/ChatUserService";
+import ChatService from "../../service/ChatService";
+import ChatUserService from "../../service/ChatUserService";
 
 
 const CreateChatModal = ({users, getFromModal, getChats}, showOnce) => {

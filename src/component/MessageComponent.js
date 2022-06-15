@@ -4,7 +4,7 @@ import {Button, Form, FormControl, InputGroup} from "react-bootstrap";
 import ChatUserService from "../service/ChatUserService";
 import MessageService from "../service/MessageService";
 import addUser from "../img/addUser.png";
-import AddUserModal from "./AddUserModal";
+import AddUserModal from "./modal/AddUserModal";
 
 const MessageComponent = ({firstCode, allUsers}) => {
 
@@ -106,39 +106,25 @@ const MessageComponent = ({firstCode, allUsers}) => {
         );
     }
 
-    function myMessage(message){
-        if(message.userDTO.id === currentUser.id){
-            return (<div align={"right"} style={{display: "flex", flexDirection: "column"}}>
-                    <div className={"messageBox myMessageBox"}>
-                        <div className={"message myMessage"}>
-                            <div className={"username"} align={"right"}>
-                                <strong>{message.userDTO.username}</strong>
-                            </div>
-                            <div className={"text"}>{message.text}</div>
-                        </div>
-                        <div className={"photo"}>
-                            <img src={message.userDTO.imgurl}/>
-                        </div>
-                    </div>
-                    <div style={{fontSize: "9px", paddingRight: "45px"}}>{message.dateTime}</div>
-                    </div>);
-        }
-        else
-            return (<div style={{display: "flex", flexDirection: "column"}}>
-                <div className={"messageBox notMyMessageBox"}>
+    function displayMessage(message){
+        let mine = message.userDTO.id === currentUser.id;
+        return (<div style={{display: "flex", flexDirection: "column"}}>
+                <div className={mine ? "messageBox myMessageBox" : "messageBox notMyMessageBox"}
+                style={{flexDirection: mine ? "row-reverse" : "row"}}>
                     <div className={"photo"}>
                         <img src={message.userDTO.imgurl}/>
                     </div>
-                    <div className={"message notMyMessage"}>
-                        <div className={"username"} align={"right"}>
+                    <div className={mine ? "message myMessage" : "message notMyMessage"}>
+                        <div className={"username"} align={mine ? "right" : "left"}>
                             <strong>{message.userDTO.username}</strong>
                         </div>
                         <div className={"text"}>{message.text}</div>
                     </div>
 
                 </div>
-                <div style={{fontSize: "9px", paddingLeft: "45px"}}>{message.dateTime}</div>
-            </div>);
+                <div style={{fontSize: "9px", paddingRight: "45px", paddingLeft: "45px"}}
+                     align={mine ? "right" : "left"}>{message.dateTime}</div>
+                </div>);
     }
 
     const getFromModal = (show) => {
@@ -177,7 +163,7 @@ const MessageComponent = ({firstCode, allUsers}) => {
             </div>
             <div className={"center"} id={"center"}>
                 {chatWithMessages.messages.map(message => (
-                    <div key={message.id}>{myMessage(message)}</div>
+                    <div key={message.id}>{displayMessage(message)}</div>
                 ))}
             </div>
             <div className={"bottomBar"}>
@@ -190,7 +176,7 @@ const MessageComponent = ({firstCode, allUsers}) => {
                             placeholder="Write message there..."
                             value={message}
                         />
-                        <Button variant="secondary" type={"submit"} disabled={disable}
+                        <Button variant={disable ? "outline-secondary" : "secondary"} type={"submit"} disabled={disable}
 
                         onClick={(e) => sendMessage(e)} >
                             Send

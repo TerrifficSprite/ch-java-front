@@ -47,6 +47,7 @@ body {
 }
 
 .one:hover {
+    word-break: break-word;
     background-color: black;
 }
 
@@ -76,6 +77,27 @@ body {
     height: 60px;
     margin: auto 5px;
 }
+
+.infoImg {
+    width: 45px;
+    height: 45px;
+    margin: auto 5px;
+    display: none;
+    visibility: hidden;
+    opacity: 0;
+    transition: visibility 0s, opacity 0.5s linear;
+}
+
+.infoImg:hover {
+    border: 1px solid #EFEFEF;
+    border-radius: 50%;
+}
+
+/*.infoImg:hover {*/
+/*    visibility: visible;*/
+/*    display: block;*/
+/*    opacity: 1;*/
+/*}*/
 
 .modal {
     color: #000;
