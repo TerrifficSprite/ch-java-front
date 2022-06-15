@@ -12,12 +12,16 @@ const root = ReactDOM.createRoot(document.getElementById('root'));
 
 
 root.render(
-  <React.StrictMode>
-      <BrowserRouter>
-          <Routes>
-              <Route path={""} element={<ChatListComponent/>}/>
-              <Route path={"/chat/:code"} element={<MessageComponent/>}/>
-          </Routes>
-      </BrowserRouter>
-  </React.StrictMode>
+    <React.StrictMode>
+        <div style={{display: "flex", width: "100%"}}>
+            {/*<ChatListComponent/>*/}
+                <BrowserRouter>
+                    <Routes>
+                        <Route path={"/*"} element={<ChatListComponent/>}/>
+                        <Route path={"/chat/:urlcode"} element={<ChatListComponent/>}/>
+                    </Routes>
+                </BrowserRouter>
+        </div>
+
+    </React.StrictMode>
 );

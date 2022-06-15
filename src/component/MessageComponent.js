@@ -1,27 +1,40 @@
-import {useState, useEffect, useRef} from "react";
-import {useParams} from "react-router-dom";
+import React, {useEffect, useState} from "react";
 import ChatService from "../service/ChatService";
-import ChatListComponent from "./ChatListComponent";
-import {Form, FormControl, Button, InputGroup} from "react-bootstrap";
+import {Button, Form, FormControl, InputGroup} from "react-bootstrap";
 import ChatUserService from "../service/ChatUserService";
 import MessageService from "../service/MessageService";
 import addUser from "../img/addUser.png";
 import AddUserModal from "./AddUserModal";
-import UserService from "../service/UserService";
-import CreateChatModal from "./CreateChatModal";
-import React from "react";
 
-const MessageComponent = () => {
+const MessageComponent = ({firstCode, allUsers}) => {
 
-    const { code } = useParams();
     const [chatWithMessages, setChatWithMessages] = useState({});
     const [message, setMessage] = useState("");
     const [chatUser, setChatUser] = useState({});
     const [currentUser, setCurrentUser] = useState(localStorage.getItem({}));
     const [loading, setLoading] = useState(true);
     const [disable, setDisable] = useState(true);
-    const [allUsers, setAllUsers] = useState([]);
+    // const [allUsers, setAllUsers] = useState([]);
     const [show, setShow] = useState(false);
+    const [code, setCode] = useState("");
+
+    if(firstCode !== code){
+        getData();
+    }
+
+    function getData() {
+        setCode(firstCode);
+        ChatService.getMessagesByChat(firstCode).then(response => {
+            setChatWithMessages(response.data);
+            setLoading(false);
+            setTimeout(function () {
+                scroll();
+            }, 100);
+        });
+        ChatUserService.getByChatAndUser(firstCode, localStorage.getItem("id")).then(r => {
+            setChatUser(r.data);
+        });
+    }
 
     useEffect(() => {
         return () => {
@@ -30,16 +43,7 @@ const MessageComponent = () => {
                 username: localStorage.getItem("username"),
                 imgurl: localStorage.getItem("imgurl")
             })
-            ChatService.getMessagesByChat(code).then(response => {
-                setChatWithMessages(response.data);
-                setLoading(false);
-                setTimeout(function () {
-                    scroll();
-                }, 100);
-            });
-            ChatUserService.getByChatAndUser(code, localStorage.getItem("id")).then(r => {
-                setChatUser(r.data);
-            });
+            getData();
         };
     }, []);
 
@@ -78,7 +82,8 @@ const MessageComponent = () => {
 
     function scroll(){
         let chat = document.getElementById("center");
-        chat.scrollTo(0, chat.scrollHeight);
+        if(chat !== null)
+            chat.scrollTo(0, chat.scrollHeight);
     }
 
     function formatDate(date) {
@@ -153,8 +158,8 @@ const MessageComponent = () => {
         return null;
 
     return (
-    <div style={{display: "flex"}}>
-        <ChatListComponent code={code} setAllUsers={setAllUsers}/>
+    <div style={{display: "flex", width: "75%"}}>
+        {/*<ChatListComponent code={code} setAllUsers={setAllUsers}/>*/}
         <div className={"chat"}>
             <div className={"topBar"}>
                 <div></div>

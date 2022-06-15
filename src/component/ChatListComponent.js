@@ -1,24 +1,31 @@
 import React, {useEffect, useState} from "react";
-import {Button, Card, Dropdown, DropdownButton, Form, FormControl, FormLabel, Image, Modal} from "react-bootstrap";
+import {Card, Dropdown, DropdownButton, Image} from "react-bootstrap";
+import {Link, useNavigate, useParams} from "react-router-dom";
 import UserService from "../service/UserService";
-import ChatService from "../service/ChatService";
-import ChatUserService from "../service/ChatUserService";
 import addUser from "../img/addUser.png";
 import CreateChatModal from "./CreateChatModal";
+import MessageComponent from "./MessageComponent";
 
-const ChatListComponent = ({setAllUsers}, code) => {
+const ChatListComponent = () => {
+
+    const { urlcode } = useParams();
+    let navigate = useNavigate();
 
     const [chats, setChats] = useState([]);
     const [users, setUsers] = useState([]);
     const [currentUser, setCurrentUser] = useState({});
     const [title, setTitle] = useState("Users");
     const [show, setShow] = useState(false);
+    const [code, setCode] = useState("");
+
+    if(code !== urlcode)
+        setCode(urlcode);
 
     useEffect(() => {
         return () => {
             UserService.getUsers().then(response => {
                 try {
-                    setAllUsers(response.data);
+                    // setAllUsers(response.data);
                 } catch (e) {
 
                 }
@@ -50,13 +57,15 @@ const ChatListComponent = ({setAllUsers}, code) => {
         localStorage.setItem("imgurl", e.imgurl);
         setCurrentUser(e);
         setTitle(e.username);
-        document.location = "http://localhost:3000/";
         getChats();
+        navigate("/");
     }
 
     function active(e) {
-        if (e.code === code.code) {
-            return " active";
+        if(urlcode !== undefined){
+            if (e.code === code) {
+                return " active";
+            }
         }
         return "";
     }
@@ -70,6 +79,7 @@ const ChatListComponent = ({setAllUsers}, code) => {
     }
 
     return (
+        <>
         <div className="chats">
             <div className="dropdown">
                 <DropdownButton variant={"success"} title={title}>
@@ -90,7 +100,7 @@ const ChatListComponent = ({setAllUsers}, code) => {
             <div className="chatList">
                 {chats.map(chat => (
                     <div className={"one"} key={chat.id}>
-                        <a href={`/chat/${chat.code}`}>
+                        <Link to={`/chat/${chat.code}`}>
                             <Card bg={"dark"} key={chat.id}>
                                 <span className={"oneCard" + active(chat)}>
                                 <Card.Img variant={"top"} src={currentUser.imgurl} className={"cardImg"}/>
@@ -100,13 +110,16 @@ const ChatListComponent = ({setAllUsers}, code) => {
                                 </Card.Body>
                                 </span>
                             </Card>
-                        </a>
+                        </Link>
                     </div>
 
                 ))}
             </div>
         </div>
-
+        {code !== undefined && (
+            <MessageComponent firstCode={code} allUsers={users}/>
+        )}
+        </>
     );
 }
 

@@ -3,6 +3,7 @@ import React, {useState} from "react";
 import ChatService from "../service/ChatService";
 import ChatUserService from "../service/ChatUserService";
 import chatService from "../service/ChatService";
+import {forEach} from "react-bootstrap/ElementChildren";
 
 
 const AddUserModal = ({chat, getFromModal, allUsers}, showOnce) => {
@@ -12,7 +13,6 @@ const AddUserModal = ({chat, getFromModal, allUsers}, showOnce) => {
     const [filteredUsers, setFilteredUsers] = useState([]);
     let users = chat.users;
 
-
     function hideModal() {
         getFromModal(false);
         setShow(false);
@@ -20,7 +20,22 @@ const AddUserModal = ({chat, getFromModal, allUsers}, showOnce) => {
     }
 
     function onShowModal() {
-        setFilteredUsers(allUsers.filter(user => !users.includes(user)));
+        let temp = [];
+        for(let i = 0; i < allUsers.length; i++){
+            let present = false;
+            for (let j = 0; j < users.length; j++) {
+                if(allUsers[i].username === users[j].username){
+                    console.log(allUsers[i].username + " + " + users[j].username)
+                    present = true;
+                    break;
+                }
+            }
+            if(!present) {
+                temp.push(allUsers[i]);
+            }
+        }
+        setFilteredUsers(temp);
+        // setFilteredUsers(allUsers.filter(user => !users.includes(user)));
     }
 
     function addUser(e){
