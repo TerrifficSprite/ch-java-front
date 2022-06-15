@@ -107,6 +107,10 @@ const ChatListComponent = () => {
         });
     }
 
+    function setNewTitle(code, newTitle){
+        document.getElementById(code).innerText = newTitle;
+    }
+
     return (
         <>
         <div className="chats">
@@ -135,7 +139,7 @@ const ChatListComponent = () => {
                                 <span className={"oneCard" + active(chat)}>
                                 <Card.Img variant={"top"} src={currentUser.imgurl} className={"cardImg"}/>
                                 <Card.Body>
-                                    <Card.Title>{chat.title}</Card.Title>
+                                    <Card.Title id={chat.code}>{chat.title}</Card.Title>
                                     <Card.Text>{chat.code}</Card.Text>
                                 </Card.Body>
                                 <Card.Img variant={"top"} src={info} className={"infoImg"} id={chat.id}
@@ -148,7 +152,7 @@ const ChatListComponent = () => {
             </div>
         </div>
         {code !== undefined && (
-            <MessageComponent firstCode={code} allUsers={users}/>
+            <MessageComponent firstCode={code} allUsers={users} setNewTitle={setNewTitle}/>
         )}
         {showChatInfo && (<ChatInfoModal chat={chatForDisplay} getFromModal={getFromModal}
                                          showOnce={showChatInfo} users={usersInChat}/>)}

@@ -46,6 +46,10 @@ body {
     border-radius: 2px;
 }
 
+.one {
+    overflow-x: hidden;
+}
+
 .one:hover {
     word-break: break-word;
     background-color: black;
@@ -152,6 +156,15 @@ body {
 .addUserToChatImg:hover {
     width: 95%;
     height: 95%;
+}
+
+.editImg {
+    height: 25px;
+    padding: 2px;
+    margin-bottom: 5px;
+    visibility: hidden;
+    border: 1px solid #EFEFEF;
+    border-radius: 50%;
 }
 
 /* Center */

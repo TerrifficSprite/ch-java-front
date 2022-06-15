@@ -4,9 +4,12 @@ import {Button, Form, FormControl, InputGroup} from "react-bootstrap";
 import ChatUserService from "../service/ChatUserService";
 import MessageService from "../service/MessageService";
 import addUser from "../img/addUser.png";
+import edit from "../img/edit.png";
 import AddUserModal from "./modal/AddUserModal";
+import RenameChatModal from "./modal/RenameChatModal";
+import {useNavigate} from "react-router-dom";
 
-const MessageComponent = ({firstCode, allUsers}) => {
+const MessageComponent = ({firstCode, allUsers, setNewTitle}) => {
 
     const [chatWithMessages, setChatWithMessages] = useState({});
     const [message, setMessage] = useState("");
@@ -14,8 +17,8 @@ const MessageComponent = ({firstCode, allUsers}) => {
     const [currentUser, setCurrentUser] = useState(localStorage.getItem({}));
     const [loading, setLoading] = useState(true);
     const [disable, setDisable] = useState(true);
-    // const [allUsers, setAllUsers] = useState([]);
-    const [show, setShow] = useState(false);
+    const [showAddUser, setShowAddUser] = useState(false);
+    const [showEditTitle, setShowEditTitle] = useState(false);
     const [code, setCode] = useState("");
 
     if(firstCode !== code){
@@ -128,14 +131,15 @@ const MessageComponent = ({firstCode, allUsers}) => {
     }
 
     const getFromModal = (show) => {
-        setShow(show);
+        setShowAddUser(show);
+        setShowEditTitle(show);
     }
 
     function addUserToChat(){
         ChatService.getUsersByChat(code).then(r => {
             chatWithMessages.users = r.data;
             setChatWithMessages(chatWithMessages);
-            setShow(true);
+            setShowAddUser(true);
             return <AddUserModal chat={chatWithMessages}/>
         })
     }
@@ -143,20 +147,44 @@ const MessageComponent = ({firstCode, allUsers}) => {
     if(loading)
         return null;
 
+    function showEdit() {
+        let title = document.getElementById("title");
+        title.style.visibility = "visible";
+    }
+
+    function hideEdit() {
+        let title = document.getElementById("title");
+        title.style.visibility = "hidden";
+    }
+
+    function openEditModal(e) {
+        e.preventDefault();
+        setShowEditTitle(true);
+    }
+
+    function changeTitle(code, newTitle) {
+        chatWithMessages.title = newTitle;
+        setChatWithMessages(chatWithMessages);
+        setNewTitle(code, newTitle);
+    }
+
     return (
     <div style={{display: "flex", width: "75%"}}>
-        {/*<ChatListComponent code={code} setAllUsers={setAllUsers}/>*/}
         <div className={"chat"}>
             <div className={"topBar"}>
                 <div></div>
                 <div>
-                    <h2 align={"center"} className={"mt-1"}>{chatWithMessages.title}</h2>
-                    <p align={"center"} className={"mb-2"}>members: {chatWithMessages.members}</p>
+                    <span align={"center"} style={{fontSize: "24px"}}
+                        onMouseEnter={showEdit} onMouseLeave={hideEdit}>
+                        {chatWithMessages.title}&nbsp;&nbsp;
+                        <a href={""} onClick={(e) => openEditModal(e)}><img id={"title"} className={"editImg"} src={edit}/></a>
+                    </span>
+                    <p align={"center"} style={{marginLeft: "-25px"}} className={"mb-2"}>members: {chatWithMessages.members}</p>
                 </div>
                 <div className={"addUserToChat"}>
                     <img src={addUser} className={"addUserToChatImg"} onClick={addUserToChat}/>
-                    {show && (
-                        <AddUserModal chat={chatWithMessages} show={show} allUsers={allUsers}
+                    {showAddUser && (
+                        <AddUserModal chat={chatWithMessages} show={showAddUser} allUsers={allUsers}
                         getFromModal={getFromModal}/>
                     )}
                 </div>
@@ -185,7 +213,12 @@ const MessageComponent = ({firstCode, allUsers}) => {
                 </Form>
             </div>
         </div>
+        {showEditTitle && (
+            <RenameChatModal chat={chatWithMessages} show={showEditTitle}
+                             getFromModal={getFromModal} changeTitle={changeTitle}/>
+        )}
     </div>
+
     );
 }
 
