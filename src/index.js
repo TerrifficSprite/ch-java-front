@@ -5,10 +5,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import './index.css';
 import './style.css';
 import ChatListComponent from "./component/ChatListComponent";
-import MessageComponent from "./component/MessageComponent";
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
-
 
 
 root.render(

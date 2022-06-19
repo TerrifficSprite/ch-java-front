@@ -12,6 +12,14 @@ class MessageService {
             chatUserId: chatUser.id
         });
     }
+
+    loadMore(code, present) {
+        return axios.get(PATH + `/${code}/${present}`);
+    }
+
+    count(code) {
+        return axios.get(PATH + `/${code}/count`);
+    }
 }
 
 export default new MessageService();

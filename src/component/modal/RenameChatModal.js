@@ -23,16 +23,22 @@ const RenameChatModal = ({chat, getFromModal, changeTitle}, showOnce) => {
             m = e;
             setTitle(e);
         }
+        document.getElementById("error").style.display = "none";
         if(m.trim().length > 0 && m !== chat.title)
             setDisable(false);
         else {
             setDisable(true);
         }
+        if(m.trim().length > 45){
+            setDisable(true);
+            document.getElementById("error").innerText = "Chat title length can`t be more than 45 symbols";
+            document.getElementById("error").style.display = "block";
+        }
     }
 
     function save(){
         let temp = chat.title;
-        chat.title = title;
+        chat.title = title.trim();
         ChatService.updateChat(chat).then(r => {
             changeTitle(chat.code, title);
             hideModal();
